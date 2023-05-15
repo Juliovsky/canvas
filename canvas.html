@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<form action="#">
+  <label for="sizeX">Size X:</label><br>
+  <input type="text" id="sizeX" name="sizeX" value="5"><br>
+  
+  <label for="sizeY">Size Y:</label><br>
+  <input type="text" id="sizeY" name="sizeY" value="5"><br><br>
+  
+  <input type="button" value="Submit" onclick="drawCanvas()">
+</form>
+
+<hr>
+
+<canvas id="myCanvas" width="1000" height="1000" style="border:1px solid #d3d3d3; background: #121212">Your browser does not support the HTML5 canvas tag.</canvas>
+
+</body>
+</html>
+
+<script>
+
+
+const size = 36;
+const padding = 20;
+
+const rects = []
+
+let canvas = document.getElementById("myCanvas");
+let context = canvas.getContext("2d");
+
+function drawCanvas() {
+  const sizeX = document.getElementById("sizeX").value;
+  const sizeY = document.getElementById("sizeY").value;
+  
+  for (let i = 0; i < sizeX; i++) {
+  x = (size + padding) * i;
+  y = padding;
+  
+  saveRect(x, y, size, size, "white");
+  
+  for (let j = 1; j < sizeY; j++) {	
+    y = (size + padding) * j + padding;	
+	saveRect(x, y, size, size, "white");
+   }
+ }
+}
+
+function saveRect(x, y, w, h, color) {
+  rects.push({x, y, w, h, color})
+  drawRect(x, y);
+}
+
+function drawRect(x, y) {
+  context.beginPath();
+  context.strokeStyle = 'gray';
+  context.fillStyle = "white";
+  context.fillRect(x, y, size, size);
+  context.stroke();
+}
+
+canvas.onmousemove = function(e) {
+  let rect = this.getBoundingClientRect(),
+      x = e.clientX - rect.left,
+      y = e.clientY - rect.top,
+      i = 0, r;
+
+  while(r = rects[i++]) {
+    context.beginPath();
+    context.rect(r.x, r.y, r.w, r.h);
+
+	if (context.isPointInPath(x, y)){
+	  r.color = (r.color === "white") ? "blue" : "white";
+	  context.fillStyle = r.color;
+      context.fill();
+	}
+  }
+};
+
+console.log('rects', rects)
+
+</script>
